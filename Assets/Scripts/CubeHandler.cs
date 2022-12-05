@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeHandler : MonoBehaviour
 {
+    public static int iCurrentColor = 1;
     public static Color currentColor = new Color(1, 1, 1, 1);
+    public Material outline;
+    GameObject outlinedObject;
 
     private void Update()
     {
@@ -12,6 +16,35 @@ public class CubeHandler : MonoBehaviour
             return;
         MyInput();
         ColorSwitching();
+        SetOutline();
+    }
+
+    private void SetOutline()
+    {
+        RaycastHit hit;
+        if (Camera.main == null)
+        {
+            print("Er is geen camera");
+            return;
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Vector3 hitLocation;
+        GameObject hitObject;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            hitLocation.x = hit.point.x; hitLocation.y = hit.point.y; hitLocation.z = hit.point.z;
+            hitObject = hit.collider.gameObject;
+            if (hitObject.tag == "BuildingBlock")
+            {
+                Material[] cubeMats = new Material[2];
+                cubeMats.SetValue(hitObject.GetComponent<Renderer>().materials[0], 0);
+                cubeMats[0].SetColor("_Color", currentColor);
+                cubeMats[1] = outline;
+                hitObject.GetComponent<Renderer>().materials = cubeMats;
+            }
+        }
     }
 
     private void MyInput()
@@ -24,7 +57,6 @@ public class CubeHandler : MonoBehaviour
 
     private void Placing()
     {
-        print("place");
         RaycastHit hit;
         if (Camera.main == null)
         {
@@ -43,10 +75,15 @@ public class CubeHandler : MonoBehaviour
             hitObject = hit.collider.gameObject;
             Vector3 placeLocation = hitObject.transform.position + hit.normal;
 
+            Material[] cubeMats = new Material[2];
+
             var createdCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             createdCube.hideFlags = HideFlags.HideInHierarchy;
             createdCube.name = "Cube";
-            createdCube.GetComponent<Renderer>().material.SetColor("_Color", currentColor);
+            cubeMats.SetValue(createdCube.GetComponent<Renderer>().materials[0], 0);
+            cubeMats[0].SetColor("_Color", currentColor);
+            //cubeMats[1] = outline;
+            createdCube.GetComponent<Renderer>().materials = cubeMats;
             createdCube.tag = "BuildingBlock";
             createdCube.layer = 10;
             Instantiate(createdCube, placeLocation, new Quaternion());
@@ -66,7 +103,6 @@ public class CubeHandler : MonoBehaviour
             hitObject = hit.collider.gameObject;
             if (hitObject.tag == "BuildingBlock")
             {
-                print("Object set false");
                 Destroy(hitObject.transform.gameObject);
             }
         }
@@ -74,52 +110,110 @@ public class CubeHandler : MonoBehaviour
 
     public void ColorSwitching()
     {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            iCurrentColor++;
+            if (iCurrentColor > 9)
+            {
+                iCurrentColor = 1;
+            }
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            iCurrentColor--;
+            if (iCurrentColor < 1)
+            {
+                iCurrentColor = 9;
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             //WHITE
-            currentColor = new Color(1, 1, 1, 1);
+            iCurrentColor = 1;
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             //BLACK
-            currentColor = new Color(0, 0, 0, 1);
+            iCurrentColor = 2;
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             //RED
-            currentColor = new Color(1, 0, 0, 1);
+            iCurrentColor = 3;
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             //GREEN
-            currentColor = new Color(0, 1, 0, 1);
+            iCurrentColor = 4;
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             //BLUE
-            currentColor = new Color(0, 0, 1, 1);
+            iCurrentColor = 5;
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             //CYAN
-            currentColor = new Color(0, 1, 1, 1);
+            iCurrentColor = 6;
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             //GRAY
-            currentColor = new Color((float)0.5, (float)0.5, (float)0.5, 1);
+            iCurrentColor = 7;
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             //MAGENTA
-            currentColor = new Color(1, 0, 1, 1);
+            iCurrentColor = 8;
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             //YELLOW
-            currentColor = new Color(1, (float)0.92, (float)0.16, 1);
+            iCurrentColor = 9;
         }
+
+        switch (iCurrentColor)
+        {
+            case 1:
+                currentColor = new Color(1, 1, 1, 1);
+                CurrentColor.GetColor();
+                return;
+            case 2:
+                currentColor = new Color(0, 0, 0, 1);
+                CurrentColor.GetColor();
+                return;
+            case 3:
+                currentColor = new Color(1, 0, 0, 1);
+                CurrentColor.GetColor();
+                return;
+            case 4:
+                currentColor = new Color(0, 1, 0, 1);
+                CurrentColor.GetColor();
+                return;
+            case 5:
+                currentColor = new Color(0, 0, 1, 1);
+                CurrentColor.GetColor();
+                return;
+            case 6:
+                currentColor = new Color(0, 1, 1, 1);
+                CurrentColor.GetColor();
+                return;
+            case 7:
+                currentColor = new Color((float)0.5, (float)0.5, (float)0.5, 1);
+                CurrentColor.GetColor();
+                return;
+            case 8:
+                currentColor = new Color(1, 0, 1, 1);
+                CurrentColor.GetColor();
+                return;
+            case 9:
+                currentColor = new Color(1, (float)0.92, (float)0.16, 1);
+                CurrentColor.GetColor();
+                return;
+        }
+
     }
 
     public static string rgbaToString(Color color)

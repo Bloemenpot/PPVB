@@ -85,7 +85,6 @@ public class PlayerMovement : MonoBehaviour
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 paused = true;
-                print("Pausing.paused");
             }
             else
             {
@@ -93,7 +92,6 @@ public class PlayerMovement : MonoBehaviour
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
                 paused = false;
-                print("Pausing.unpaused");
             }
         }
     }
