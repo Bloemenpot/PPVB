@@ -16,7 +16,7 @@ public class CubeHandler : MonoBehaviour
             return;
         MyInput();
         ColorSwitching();
-        SetOutline();
+        //SetOutline();
     }
 
     private void SetOutline()
@@ -41,7 +41,7 @@ public class CubeHandler : MonoBehaviour
                 Material[] cubeMats = new Material[2];
                 cubeMats.SetValue(hitObject.GetComponent<Renderer>().materials[0], 0);
                 cubeMats[0].SetColor("_Color", currentColor);
-                cubeMats[1] = outline;
+                //cubeMats[1] = outline;
                 hitObject.GetComponent<Renderer>().materials = cubeMats;
             }
         }
